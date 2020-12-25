@@ -2,7 +2,7 @@
 
 import Layout from '@/layout'
 
-const componentsRouter = {
+/*const componentsRouter = {
   path: '/components',
   component: Layout,
   redirect: 'noRedirect',
@@ -97,6 +97,6 @@ const componentsRouter = {
       meta: { title: 'Drag Kanban' }
     }
   ]
-}
+}*/
 
-export default componentsRouter
+//export default componentsRouter

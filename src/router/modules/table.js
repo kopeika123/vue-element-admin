@@ -2,7 +2,7 @@
 
 import Layout from '@/layout'
 
-const tableRouter = {
+/*const tableRouter = {
   path: '/table',
   component: Layout,
   redirect: '/table/complex-table',
@@ -38,4 +38,4 @@ const tableRouter = {
     }
   ]
 }
-export default tableRouter
+export default tableRouter*/

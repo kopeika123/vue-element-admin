@@ -93,3 +93,9 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.svg-icon[data-v-c8a70580]{
+  font-size: 24px;
+  vertical-align: -0.32em !important;
+}
+</style>

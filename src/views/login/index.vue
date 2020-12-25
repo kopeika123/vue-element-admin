@@ -1,85 +1,145 @@
 <template>
-  <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
-
-      <div class="title-container">
-        <h3 class="title">Login Form</h3>
-      </div>
-
-      <el-form-item prop="username">
+  <v-app>
+    <div class="login-container">
+      <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on"
+               label-position="left">
+        <v-alert
+          :value="alert"
+          dense
+          outlined
+          type="error"
+        >
+        </v-alert>
+        <div class="title-container">
+          <h3 class="title">EVE software</h3>
+        </div>
+        <v-window v-model="step">
+          <v-window-item :value="1">
+            <el-form-item prop="username">
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+          <svg-icon icon-class="phone"/>
         </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-      </el-form-item>
+              <label for="phone"></label>
+              <input
+                type="tel"
+                v-model="loginForm.phone"
+                name="phone"
+                id="phone"
+                placeholder="(555) 555-55-55"
+                autocomplete="tel"
+                maxlength="15"
+                class="phonemask"
+                border="5"
+                v-phone
+                required
+              />
+            </el-form-item>
 
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
+            <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+              <el-form-item prop="password">
           <span class="svg-container">
-            <svg-icon icon-class="password" />
+            <svg-icon icon-class="password"/>
           </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            :type="passwordType"
-            placeholder="Password"
-            name="password"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+                <el-input
+                  :key="passwordType"
+                  ref="password"
+                  v-model="loginForm.password"
+                  :type="passwordType"
+                  placeholder="Пароль"
+                  name="password"
+                  tabindex="2"
+                  autocomplete="on"
+                  @keyup.native="checkCapslock"
+                  @blur="capsTooltip = false"
+                  @keyup.enter.native="handleLogin"
+                />
+                <span class="show-pwd" @click="showPwd">
+            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
           </span>
-        </el-form-item>
-      </el-tooltip>
+              </el-form-item>
+            </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+            <el-button :loading="loading" type="primary" style="margin-bottom:30px;color: white" @click.native.prevent="handleLogin">Вход
+            </el-button>
+            <v-btn text color="#ffffff" style="float: right; margin-bottom:30px;" @click="step++">Регистрация</v-btn>
+          </v-window-item>
+          <v-window-item :value="2">
+            <div style="text-align: center;margin-bottom: 15px">
+              <label style="color: white;">Регистрация</label>
+            </div>
+            <el-form-item prop="username">
+        <span class="svg-container">
+          <svg-icon icon-class="phone"/>
+        </span>
+              <el-input
+                ref="username"
+                v-model="registration.phone"
+                placeholder="Телефон"
+                type="text"
+                tabindex="1"
+                autocomplete="on"
+              />
+            </el-form-item>
+            <v-btn text color="#ffffff" style="float: left; margin-bottom:30px;" @click="send_sms">Далее</v-btn>
+            <v-btn text color="#ffffff" style="float: right; margin-bottom:30px;" @click="step--">Назад</v-btn>
+          </v-window-item>
+          <v-window-item :value="3">
+            <div style="text-align: center;margin-bottom: 15px">
+              <label style="color: white;">Введите код из СМС</label>
+            </div>
+            <v-row>
+              <v-col cols="3" sm="3" md="3">
+                <v-text-field outlined color="white"/>
+              </v-col>
+              <v-col cols="3" sm="3" md="3">
+                <v-text-field outlined color="white"/>
+              </v-col>
+              <v-col cols="3" sm="3" md="3">
+                <v-text-field outlined color="white"/>
+              </v-col>
+              <v-col cols="3" sm="3" md="3">
+                <v-text-field outlined color="white"/>
+              </v-col>
+            </v-row>
+            <div style="text-align: center;margin-bottom: 15px">
+              <v-btn block color="info" style="margin-bottom:30px;color: white" @click="step = 1">Подвердить</v-btn>
+            </div>
+          </v-window-item>
+        </v-window>
+        <!--      <div style="position:relative">
+                <div class="tips">
+                  <span>Username : admin</span>
+                  <span>Password : any</span>
+                </div>
+                <div class="tips">
+                  <span style="margin-right:18px;">Username : editor</span>
+                  <span>Password : any</span>
+                </div>
 
-      <div style="position:relative">
-        <div class="tips">
-          <span>Username : admin</span>
-          <span>Password : any</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
-        </div>
+                <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
+                  Or connect with
+                </el-button>
+              </div>-->
+      </el-form>
 
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          Or connect with
-        </el-button>
-      </div>
-    </el-form>
-
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
-  </div>
+      <!--    <el-dialog title="Or connect with" :visible.sync="showDialog">
+            Can not be simulated on local, so please combine you own business simulation! ! !
+            <br>
+            <br>
+            <br>
+            <social-sign />
+          </el-dialog>-->
+    </div>
+  </v-app>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import {validUsername} from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
 
 export default {
   name: 'Login',
-  components: { SocialSign },
+  components: {SocialSign},
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
@@ -89,20 +149,31 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
+      if (value.length < 3) {
         callback(new Error('The password can not be less than 6 digits'))
       } else {
         callback()
       }
     }
     return {
+      step: 1,
+      usernameReg: '',
+      showPassword: false,
+      passwordReg: '',
+      passwordRegRepeat: '',
+      alert: false,
+      registration: {
+        phoneReg: '',
+        password: '',
+        repeatPassword: ''
+      },
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        phone: '',
+        password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        phone: [{required: true, trigger: 'blur', validator: validateUsername}],
+        password: [{required: true, trigger: 'blur', validator: validatePassword}]
       },
       passwordType: 'password',
       capsTooltip: false,
@@ -114,7 +185,7 @@ export default {
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         const query = route.query
         if (query) {
           this.redirect = query.redirect
@@ -128,9 +199,10 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    if (this.loginForm.username === '') {
-      this.$refs.username.focus()
-    } else if (this.loginForm.password === '') {
+/*    if (this.loginForm.phone === '') {
+      this.$refs.phone.focus()
+    } else*/
+      if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
   },
@@ -138,8 +210,11 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    send_sms() {
+      this.step++
+    },
     checkCapslock(e) {
-      const { key } = e
+      const {key} = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
     },
     showPwd() {
@@ -152,13 +227,14 @@ export default {
         this.$refs.password.focus()
       })
     },
+
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+              this.$router.push({path: this.redirect || '/', query: this.otherQuery})
               this.loading = false
             })
             .catch(() => {
@@ -201,11 +277,8 @@ export default {
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
-$bg:#283443;
-$light_gray:#fff;
+$bg: #283443;
+$light_gray: #fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -244,13 +317,36 @@ $cursor: #fff;
     border-radius: 5px;
     color: #454545;
   }
+
+  .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+  }
+
+  .theme--light.v-input, .theme--light.v-input input, .theme--light.v-input textarea {
+    text-align: center;
+  }
+
+  .theme--light.v-input, .theme--light.v-input input, .theme--light.v-input textarea {
+    color: rgb(251 251 251 / 87%);
+  }
+  .phonemask{
+    box-shadow: 0 0 0px 1000px #283443 inset !important;
+    -webkit-text-fill-color: #fff !important;
+    margin-left: 15px;
+    width: 89%;
+  }
+  .phonemask:focus{
+    outline: none !important;
+  }
 }
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 
 .login-container {
   min-height: 100%;
